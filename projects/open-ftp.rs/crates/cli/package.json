@@ -1,0 +1,7 @@
+{
+    "name": "@wae/open-ftp-cli-contract",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Rust contract library for OpenFTP CLI command ids, exit codes, and the machine-readable envelope",
+    "license": "Apache-2.0"
+}

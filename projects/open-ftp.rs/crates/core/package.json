@@ -1,0 +1,7 @@
+{
+    "name": "@wae/open-ftp-core",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Rust domain model for OpenFTP: capability states, error codes, and audit vocabulary",
+    "license": "Apache-2.0"
+}

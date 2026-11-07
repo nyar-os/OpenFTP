@@ -1,14 +1,30 @@
 [workspace]
 resolver = "2"
-members = ["projects/*"]
-default-members = [
-    "projects/sub_projects",
+members = [
+    "projects/open-ftp.rs/crates/core",
+    "projects/open-ftp.rs/crates/napi",
+    "projects/open-ftp.rs/crates/cli",
 ]
-exclude = [
-    "projects/.DS_Store",
+default-members = [
+    "projects/open-ftp.rs/crates/core",
+    "projects/open-ftp.rs/crates/napi",
+    "projects/open-ftp.rs/crates/cli",
 ]
 
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.90"
+license = "Apache-2.0"
+authors = ["OpenFTP Authors"]
+repository = "https://github.com/nyar-os/OpenFTP"
+
 [workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+wae = { git = "https://github.com/doki-land/wae-framework.git", rev = "ae0db25961a72a2abc51a24b097f4363093c5394" }
+open-ftp-core = { path = "projects/open-ftp.rs/crates/core", version = "0.0.0" }
+open-ftp-cli = { path = "projects/open-ftp.rs/crates/cli", version = "0.0.0" }
 
 [profile.release]
 lto = true
