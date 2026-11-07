@@ -9,18 +9,25 @@ every domain capability refuses with `not_implemented`, and no external `ftp`,
 | Capability | Target behaviour |
 |------------|------------------|
 | `endpoint-list` | Inventory configured FTP and FTPS endpoints with redacted connection metadata |
+| `endpoint-ports` | Configure control, TLS, data, and passive ports and preview the firewall impact. Never starts or stops a remote FTP service |
 | `ftp-connect` | Open the control channel, authenticate, and negotiate explicit or implicit TLS |
 | `ftp-list` | List a remote directory with encoding negotiation and a deterministic order |
 | `ftp-transfer` | Upload or download files with resume, checksum verification, and progress |
 | `ftp-mirror` | Mirror a tree with an explicit delete policy and conflict confirmation |
-| `rsync-plan` | Scan both sides and preview a delta plan without writing |
+| `rsync-plan` | Compute the block-level delta plan without writing or rendering a preview |
+| `sync-direction` | Declare local-to-remote, remote-to-local, or bidirectional and reject a plan that disagrees |
+| `sync-conflict-policy` | Resolve conflicts with skip, overwrite, newer-wins, or rename, with confirmation for destructive choices |
+| `sync-preview` | Report the dry-run preview: direction, change and conflict counts, planned bytes, and undo scope |
+| `sync-undo` | Revert only files this plan created or overwrote. Pre-existing remote files are never deleted automatically |
 | `rsync-apply` | Apply a delta plan with a transaction and rollback boundary |
 | `sync-schedule` | Schedule a sync task with idempotent retries and stable run ids |
 | `host-install` | Install the host integration and desktop entry |
 | `host-uninstall` | Remove the host integration and clean residual state |
 
-Plan and apply are separate capabilities. A plan never writes, and an apply
-requires the plan identity it was previewed from.
+Plan, preview, apply, and undo are separate capabilities. A plan never writes,
+an apply requires the plan identity it was previewed from, and an undo touches
+only the files recorded by that plan. Sync direction and conflict policy are
+their own rows, so a single vague `sync` command does not exist.
 
 ## Layout
 
@@ -64,8 +71,12 @@ open-ftp capabilities --json
 open-ftp version
 open-ftp ftp-connect --json
 open-ftp ftp-transfer --dry-run --json
+open-ftp sync-direction --json
+open-ftp sync-conflict-policy --dry-run --json
+open-ftp sync-preview --json
 open-ftp rsync-plan --json
 open-ftp rsync-apply --json
+open-ftp sync-undo --json
 open-ftp audit --kind agent --limit 20 --json
 ```
 

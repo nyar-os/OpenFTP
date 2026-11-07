@@ -250,7 +250,7 @@ mod tests {
         let contract = contract();
         assert_eq!(contract.schema, CONTRACT_SCHEMA);
         assert_eq!(contract.app, "open-ftp");
-        assert_eq!(contract.commands.len(), 14);
+        assert_eq!(contract.commands.len(), 19);
         let mut ids = Vec::new();
         for row in &contract.commands {
             assert!(!ids.contains(&row.id), "duplicate command id: {}", row.id);

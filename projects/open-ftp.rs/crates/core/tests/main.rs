@@ -4,13 +4,18 @@ use open_ftp_core::{
     platform::{capabilities, platform},
 };
 
-const DOMAIN: [&str; 10] = [
+const DOMAIN: [&str; 15] = [
     capability_ids::ENDPOINT_LIST,
+    capability_ids::ENDPOINT_PORTS,
     capability_ids::FTP_CONNECT,
     capability_ids::FTP_LIST,
     capability_ids::FTP_TRANSFER,
     capability_ids::FTP_MIRROR,
     capability_ids::RSYNC_PLAN,
+    capability_ids::SYNC_DIRECTION,
+    capability_ids::SYNC_CONFLICT_POLICY,
+    capability_ids::SYNC_PREVIEW,
+    capability_ids::SYNC_UNDO,
     capability_ids::RSYNC_APPLY,
     capability_ids::SYNC_SCHEDULE,
     capability_ids::HOST_INSTALL,
@@ -40,6 +45,32 @@ fn sync_capabilities_are_split_into_plan_and_apply() {
         assert_eq!(item.state, Some(CapabilityState::NotImplemented));
     }
     assert!(report.get(capability_ids::RSYNC_PLAN).expect("plan row").detail.contains("without writing"));
+}
+
+#[test]
+fn sync_direction_conflict_preview_and_undo_have_separate_rows() {
+    let report = capabilities();
+    for (id, needle) in [
+        (capability_ids::SYNC_DIRECTION, "bidirectional"),
+        (capability_ids::SYNC_CONFLICT_POLICY, "overwrite"),
+        (capability_ids::SYNC_PREVIEW, "dry-run preview"),
+        (capability_ids::SYNC_UNDO, "never happens automatically"),
+    ] {
+        let item = report.get(id).unwrap_or_else(|| panic!("missing capability row: {id}"));
+        assert_eq!(item.state, Some(CapabilityState::NotImplemented), "{id} must stay not_implemented");
+        assert_eq!(item.code, Some("not_implemented"), "{id} must carry the stable code");
+        assert!(item.detail.contains(needle), "{id} detail must describe {needle}");
+    }
+    assert!(report.notes.iter().any(|note| note.contains("There is no capability named `sync` on its own")));
+}
+
+#[test]
+fn endpoint_ports_is_limited_to_port_configuration() {
+    let report = capabilities();
+    let item = report.get(capability_ids::ENDPOINT_PORTS).expect("endpoint-ports row");
+    assert_eq!(item.state, Some(CapabilityState::NotImplemented));
+    assert!(item.detail.contains("passive ports"));
+    assert!(item.detail.contains("never starts or stops a remote FTP service"));
 }
 
 #[test]

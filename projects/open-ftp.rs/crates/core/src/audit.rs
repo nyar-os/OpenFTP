@@ -15,6 +15,8 @@ pub mod capability_ids {
 
     /// Inventory configured FTP and FTPS endpoints.
     pub const ENDPOINT_LIST: &str = "endpoint-list";
+    /// Configure control, TLS, data, and passive ports for an endpoint.
+    pub const ENDPOINT_PORTS: &str = "endpoint-ports";
     /// Open the control channel, authenticate, and negotiate TLS.
     pub const FTP_CONNECT: &str = "ftp-connect";
     /// List a remote directory with encoding negotiation.
@@ -23,8 +25,16 @@ pub mod capability_ids {
     pub const FTP_TRANSFER: &str = "ftp-transfer";
     /// Mirror a tree with an explicit delete and conflict policy.
     pub const FTP_MIRROR: &str = "ftp-mirror";
-    /// Scan and preview an rsync-style delta plan.
+    /// Scan and compute an rsync-style delta plan.
     pub const RSYNC_PLAN: &str = "rsync-plan";
+    /// Declare the sync direction and reject plans that disagree.
+    pub const SYNC_DIRECTION: &str = "sync-direction";
+    /// Resolve conflicts with an explicit policy and confirmation.
+    pub const SYNC_CONFLICT_POLICY: &str = "sync-conflict-policy";
+    /// Render a machine-readable dry-run preview of a sync plan.
+    pub const SYNC_PREVIEW: &str = "sync-preview";
+    /// Undo files created or overwritten by one recorded plan.
+    pub const SYNC_UNDO: &str = "sync-undo";
     /// Apply a delta plan with a transaction and rollback boundary.
     pub const RSYNC_APPLY: &str = "rsync-apply";
     /// Schedule a sync task with idempotent retries.

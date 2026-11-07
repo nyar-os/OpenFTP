@@ -210,11 +210,16 @@ cli.command('gui', 'cli.cmd.gui')
 
 for (const [id, mutating] of [
     ['endpoint-list', false],
+    ['endpoint-ports', true],
     ['ftp-connect', false],
     ['ftp-list', false],
     ['ftp-transfer', true],
     ['ftp-mirror', true],
     ['rsync-plan', false],
+    ['sync-direction', true],
+    ['sync-conflict-policy', true],
+    ['sync-preview', false],
+    ['sync-undo', true],
     ['rsync-apply', true],
     ['sync-schedule', true],
     ['host-install', true],

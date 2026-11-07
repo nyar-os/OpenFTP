@@ -22,9 +22,16 @@ Do not parse human prose.
 
 ## Plan before apply
 
-`rsync-plan` and `rsync-apply` are separate capabilities. A plan never writes.
-An apply requires the plan identity it was previewed from, so a dry run cannot
-silently turn into a write.
+`rsync-plan` computes a delta plan and never writes. `sync-preview` renders the
+machine-readable preview. `rsync-apply` is a separate capability. An apply
+requires the plan identity it was previewed from, so a dry run cannot silently
+turn into a write.
+
+Sync semantics are four separate capabilities, never one vague `sync`:
+`sync-direction` declares and validates the direction, `sync-conflict-policy`
+chooses conflict handling and requires confirmation for destructive choices,
+`sync-preview` reports direction, size, conflicts, and undo scope, and
+`sync-undo` reverts only files this plan created or overwrote.
 
 1. Read the capability table. Rows with a non-null `state` are refusals and must
    not be attempted.
@@ -35,27 +42,39 @@ silently turn into a write.
 
    `open-ftp endpoint-list --json`
 
-3. Preview a delta. Show the plan, its size, and its delete list to the user.
+3. Declare direction and conflict policy before previewing.
 
-   `open-ftp rsync-plan --json`
+   `open-ftp sync-direction --json`
 
-4. Apply only after explicit confirmation. Deletions require their own
+   `open-ftp sync-conflict-policy --dry-run --json`
+
+4. Preview a delta. Show the plan, its size, its conflicts, and its delete list
+   to the user.
+
+   `open-ftp sync-preview --json`
+
+5. Apply only after explicit confirmation. Deletions require their own
    confirmation and are never implied by a mirror or a sync.
 
    `open-ftp rsync-apply --json`
 
+6. Undo only when the user asks. An undo reverts files this plan created or
+   overwrote and never removes pre-existing remote files automatically.
+
+   `open-ftp sync-undo --json`
+
 ## File transfer
 
-5. Preview the transfer plan first.
+7. Preview the transfer plan first.
 
    `open-ftp ftp-transfer --dry-run --json`
 
-6. Transfer with resume and checksum verification. A failed transfer leaves a
+8. Transfer with resume and checksum verification. A failed transfer leaves a
    partial file that is reported, never silently accepted as complete.
 
    `open-ftp ftp-transfer --json`
 
-7. Mirror only after confirming the delete policy. A mirror with deletions must
+9. Mirror only after confirming the delete policy. A mirror with deletions must
    list every removed path before applying.
 
    `open-ftp ftp-mirror --dry-run --json`

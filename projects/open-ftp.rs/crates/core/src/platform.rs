@@ -40,8 +40,10 @@ impl CapabilityItem {
 pub struct CapabilitiesReport {
     /// Product name.
     pub app: &'static str,
-    /// Current host platform.
-    pub platform: PlatformInfo,
+    /// Operating system constant such as `windows`.
+    pub platform: &'static str,
+    /// CPU architecture constant such as `x86_64`.
+    pub arch: &'static str,
     /// Native package version.
     pub version: &'static str,
     /// Every registered capability, including unavailable rows.
@@ -61,11 +63,28 @@ const SKELETON_REASON: &str = "The skeleton round registers the capability but d
 
 const DOMAIN: &[(&str, &str)] = &[
     (capability_ids::ENDPOINT_LIST, "Inventory configured FTP and FTPS endpoints with redacted connection metadata."),
+    (
+        capability_ids::ENDPOINT_PORTS,
+        "Configure control, TLS, data, and passive ports for an endpoint and preview the firewall impact. This never starts or stops a remote FTP service.",
+    ),
     (capability_ids::FTP_CONNECT, "Open the control channel, authenticate, and negotiate explicit or implicit TLS."),
     (capability_ids::FTP_LIST, "List a remote directory with encoding negotiation and a deterministic order."),
     (capability_ids::FTP_TRANSFER, "Upload or download files with resume, checksum verification, and progress."),
     (capability_ids::FTP_MIRROR, "Mirror a tree with an explicit delete policy and conflict confirmation."),
-    (capability_ids::RSYNC_PLAN, "Scan both sides and preview an rsync-style delta plan without writing."),
+    (capability_ids::RSYNC_PLAN, "Scan both sides and compute the block-level delta plan without writing or rendering a preview."),
+    (capability_ids::SYNC_DIRECTION, "Declare local-to-remote, remote-to-local, or bidirectional and reject any plan that disagrees."),
+    (
+        capability_ids::SYNC_CONFLICT_POLICY,
+        "Resolve conflicts with skip, overwrite, newer-wins, or rename, and require confirmation before a destructive choice.",
+    ),
+    (
+        capability_ids::SYNC_PREVIEW,
+        "Render the machine-readable dry-run preview with direction, change and conflict counts, planned bytes, and undo scope.",
+    ),
+    (
+        capability_ids::SYNC_UNDO,
+        "Revert only files this plan created or overwrote. Deleting a pre-existing remote file never happens automatically.",
+    ),
     (capability_ids::RSYNC_APPLY, "Apply a delta plan with a transaction and rollback boundary."),
     (capability_ids::SYNC_SCHEDULE, "Schedule a sync task with idempotent retries and stable run ids."),
     (capability_ids::HOST_INSTALL, "Install the host integration and desktop entry."),
@@ -101,12 +120,14 @@ pub fn capabilities() -> CapabilitiesReport {
     }
     CapabilitiesReport {
         app: "open-ftp",
-        platform: platform(),
+        platform: platform().os,
+        arch: platform().arch,
         version: env!("CARGO_PKG_VERSION"),
         items,
         notes: vec![
             "Domain capabilities are intentionally not_implemented in this skeleton round.",
             "Capability, version, audit, and GUI meta capabilities are available.",
+            "Sync is expressed as `sync-direction`, `sync-conflict-policy`, `sync-preview`, and `sync-undo`. There is no capability named `sync` on its own.",
             "FTPS uses the product-owned TLS stack. No capability may fall back to an external ftp, sftp, rsync, or openssl process.",
         ],
     }

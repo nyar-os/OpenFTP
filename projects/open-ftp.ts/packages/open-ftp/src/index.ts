@@ -23,7 +23,8 @@ export interface CapabilityItem {
 /** Capability report, including the `gui` row added by the native boundary. */
 export interface CapabilitiesReport {
     app: string;
-    platform: { os: string; arch: string };
+    platform: string;
+    arch: string;
     version: string;
     items: CapabilityItem[];
     notes: string[];

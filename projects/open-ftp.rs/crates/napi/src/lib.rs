@@ -418,9 +418,14 @@ mod tests {
     fn invoke_refuses_every_domain_capability_with_its_stable_code() {
         for id in [
             capability_ids::ENDPOINT_LIST,
+            capability_ids::ENDPOINT_PORTS,
             capability_ids::FTP_CONNECT,
             capability_ids::FTP_TRANSFER,
             capability_ids::RSYNC_PLAN,
+            capability_ids::SYNC_DIRECTION,
+            capability_ids::SYNC_CONFLICT_POLICY,
+            capability_ids::SYNC_PREVIEW,
+            capability_ids::SYNC_UNDO,
             capability_ids::SYNC_SCHEDULE,
         ] {
             let error = invoke_error(id);
